@@ -1,10 +1,10 @@
 services:
   discodrome:
     image: 7eventy7/discodrome:latest
-    container_name: discodrome
+    container_name: discodromev2
     restart: unless-stopped
     env_file:
-      - data.env.example
+      - .env
     environment:
       - SUBSONIC_SERVER=${SUBSONIC_SERVER}
       - SUBSONIC_USER=${SUBSONIC_USER}
@@ -13,3 +13,6 @@ services:
       - DISCORD_TEST_GUILD=${DISCORD_TEST_GUILD}
       - DISCORD_OWNER_ID=${DISCORD_OWNER_ID}
       - BOT_STATUS=${BOT_STATUS}
+    volumes:
+    - ./data/guilds.db:/app/guilds.db
+    - ./data/guild_properties.pickle:/app/guild_properties.pickle
