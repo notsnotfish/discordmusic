@@ -8,6 +8,8 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/7eventy7/discodrome.svg)](https://hub.docker.com/r/7eventy7/discodrome)
 [![License](https://img.shields.io/github/license/7eventy7/discodrome.svg)](https://github.com/7eventy7/discodrome/blob/main/LICENSE)
 
+A FORK OF https://github.com/7eventy7/discodrome.git
+
 A Discord music bot that seamlessly streams music from your personal music server directly to your voice channels. Works great with Navidrome and other Subsonic-compatible music servers.
 
 </div>
