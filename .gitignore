@@ -139,3 +139,6 @@ dmypy.json
 
 # Visual Studio Code
 .vscode
+
+guilds.db
+guild_properties.pickle
