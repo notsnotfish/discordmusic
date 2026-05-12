@@ -3,7 +3,7 @@ import os
 from typing import Final
 from dotenv import load_dotenv
 
-load_dotenv(os.path.relpath("data.env"))
+load_dotenv(os.path.relpath(".env"))
 
 DISCORD_BOT_TOKEN: Final[str] = os.getenv("DISCORD_BOT_TOKEN")
 DISCORD_TEST_GUILD: Final[str] = os.getenv("DISCORD_TEST_GUILD")

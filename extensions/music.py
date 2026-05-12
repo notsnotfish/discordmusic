@@ -15,8 +15,18 @@ from pagination import ListPaginator
 
 from discodrome import DiscodromeClient
 from util import env
+import db
 
 logger = logging.getLogger(__name__)
+
+def music_access_check(interaction: discord.Interaction) -> bool:
+    """
+    Returns True if the invoking member is allowed to use music commands.
+    - No roles configured for this guild → everyone is allowed (safe default).
+    - Otherwise → member must hold at least one whitelisted role.
+    """
+    member_role_ids = [r.id for r in interaction.user.roles]
+    return db.user_has_access(interaction.guild_id, member_role_ids)
 
 class MusicCog(commands.Cog):
     ''' A Cog containing music playback commands '''
@@ -246,7 +256,7 @@ class MusicCog(commands.Cog):
             ]
             del choices[env.BOT_SEARCH_SUGGESTION_COUNT:]
         return choices
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="play", description="Plays a specified track, album or playlist")
     @app_commands.describe(querytype="Whether what you're searching is a track, album or playlist", query="Enter a search query")
     @app_commands.autocomplete(querytype=play_querytype_autocomplete)
@@ -369,7 +379,7 @@ class MusicCog(commands.Cog):
             await ui.ErrMsg.msg(ctx, f"An unknown error has occurred and has been logged to console. Please contact an administrator. {error}")
 
 
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="next", description="Searches for a track and places it next in the queue")
     @app_commands.describe(query="Enter a search query")
     async def play_next(self, interaction: Interaction, query: str) -> None:
@@ -395,7 +405,7 @@ class MusicCog(commands.Cog):
         await ui.SysMsg.added_to_queue(interaction, songs[0])
 
 
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="stop", description="Stop playing the current track")
     async def stop(self, interaction: Interaction) -> None:
         ''' Disconnect from the active voice channel '''
@@ -426,7 +436,7 @@ class MusicCog(commands.Cog):
         await ui.ErrMsg.msg(ctx, f"An unknown error has occurred and has been logged to console. Please contact an administrator. {error}")
 
 
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="queue", description="View the current queue")
     async def show_queue(self, interaction: Interaction) -> None:
         ''' Show the current queue '''
@@ -465,7 +475,7 @@ class MusicCog(commands.Cog):
         await ui.ErrMsg.msg(ctx, f"An unknown error has occurred and has been logged to console. Please contact an administrator. {error}")
 
 
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="clear", description="Clear the current queue")
     async def clear_queue(self, interaction: Interaction) -> None:
         '''Clear the queue'''
@@ -481,7 +491,7 @@ class MusicCog(commands.Cog):
         await ui.ErrMsg.msg(ctx, f"An unknown error has occurred and has been logged to console. Please contact an administrator. {error}")
 
 
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="skip", description="Skip the current track")
     async def skip(self, interaction: Interaction) -> None:
         ''' Skip the current track '''
@@ -509,7 +519,7 @@ class MusicCog(commands.Cog):
         await ui.ErrMsg.msg(ctx, f"An unknown error has occurred and has been logged to console. Please contact an administrator. {error}")
 
 
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="autoplay", description="Toggles autoplay")
     @app_commands.describe(mode="Determines the method to use when autoplaying")
     @app_commands.choices(mode=[
@@ -565,7 +575,7 @@ class MusicCog(commands.Cog):
             await ui.ErrMsg.msg(ctx, f"An unknown error has occurred and has been logged to console. Please contact an administrator. {error}")
 
 
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="shuffle", description="Shuffles the current queue")
     async def shuffle(self, interaction: Interaction):
         ''' Randomize current queue using Fisher-Yates algorithm '''
@@ -595,7 +605,7 @@ class MusicCog(commands.Cog):
             app_commands.Choice(name=artist.name, value=artist.name)
             for artist in artists
         ]
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="disco", description="Plays the artist's entire discography")
     @app_commands.describe(artist="The artist to play")
     @app_commands.autocomplete(artist=disco_artist_autocomplete)
@@ -636,7 +646,7 @@ class MusicCog(commands.Cog):
             await ui.ErrMsg.msg(ctx, f"An unknown error has occurred and has been logged to console. Please contact an administrator. {error}")
 
 
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="playlists", description="List all playlists")
     async def list_playlists(self, interaction):
         # Send query to subsonic API and retrieve a list of all playlists
@@ -688,7 +698,7 @@ class MusicCog(commands.Cog):
         ]
         del playlists[env.BOT_SEARCH_SUGGESTION_COUNT:]
         return playlists
-
+    @app_commands.check(music_access_check)
     @app_commands.command(name="playlist", description="List tracks in the given playlist")
     @app_commands.describe(query="Enter the name of a playlist", page="The page to view")
     @app_commands.autocomplete(query=list_playlist_query_autocomplete)
