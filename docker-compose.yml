@@ -1,6 +1,6 @@
 services:
   discodrome:
-    image: 7eventy7/discodrome:latest
+    image: snotfishspam/discodrome:latest
     container_name: discodromev2
     restart: unless-stopped
     env_file:
@@ -15,4 +15,3 @@ services:
       - BOT_STATUS=${BOT_STATUS}
     volumes:
     - ./data/guilds.db:/app/guilds.db
-    - ./data/guild_properties.pickle:/app/guild_properties.pickle

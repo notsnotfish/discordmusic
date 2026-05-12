@@ -177,7 +177,10 @@ class MusicCog(commands.Cog):
         player = data.guild_data(ctx.guild.id).player
         player.channel = ctx.channel
         await player.skip_track(voice_client)
-        await ctx.send(f"Track skipped - now playing **{player.current_song.title}** by {player.current_song.artist}")
+        if player.current_song is not None:
+            await ctx.send(f"Track skipped - now playing **{player.current_song.title}** by {player.current_song.artist}")
+        else:
+            await ctx.send("Track skipped - queue is now empty.")
 
 
     
@@ -512,6 +515,10 @@ class MusicCog(commands.Cog):
         player = data.guild_data(interaction.guild_id).player
         player.channel = interaction.channel
         await player.skip_track(voice_client)
+        if player.current_song is not None:
+            await ui.SysMsg.msg(interaction, f"Track skipped - now playing **{player.current_song.title}**")
+        else:
+            await ui.SysMsg.msg(interaction, "Track skipped - queue is now empty.")
 
     @skip.error
     async def skip_error(self, ctx, error):
